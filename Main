@@ -1,0 +1,149 @@
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "LoadstringSelector"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = playerGui
+
+local mainFrame = Instance.new("Frame")
+mainFrame.Name = "MainFrame"
+mainFrame.Size = UDim2.new(0, 300, 0, 340)
+mainFrame.Position = UDim2.new(0.5, -150, 0.5, -170)
+mainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+mainFrame.BorderSizePixel = 0
+mainFrame.Parent = screenGui
+
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 8)
+corner.Parent = mainFrame
+
+local stroke = Instance.new("UIStroke")
+stroke.Color = Color3.fromRGB(50, 50, 50)
+stroke.Thickness = 1
+stroke.Parent = mainFrame
+
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(1, 0, 0, 40)
+titleLabel.Position = UDim2.new(0, 0, 0, 0)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "Selecciona tus Scripts"
+titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleLabel.TextSize = 18
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.Parent = mainFrame
+
+local selected = {
+    OPT = false,
+    LH = false,
+    SKG = false
+}
+
+local buttons = {}
+
+local function createOptionButton(name, color, yPos)
+    local btn = Instance.new("TextButton")
+    btn.Name = name
+    btn.Size = UDim2.new(0, 240, 0, 45)
+    btn.Position = UDim2.new(0.5, -120, 0, yPos)
+    btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    btn.Text = name
+    btn.TextColor3 = color
+    btn.TextSize = 16
+    btn.Font = Enum.Font.GothamSemibold
+    btn.BorderSizePixel = 0
+    btn.Parent = mainFrame
+
+    local btnCorner = Instance.new("UICorner")
+    btnCorner.CornerRadius = UDim.new(0, 6)
+    btnCorner.Parent = btn
+
+    local btnStroke = Instance.new("UIStroke")
+    btnStroke.Color = color
+    btnStroke.Thickness = 2
+    btnStroke.Transparency = 0.7
+    btnStroke.Parent = btn
+
+    buttons[name] = {button = btn, stroke = btnStroke, color = color}
+
+    btn.MouseButton1Click:Connect(function()
+        selected[name] = not selected[name]
+        if selected[name] then
+            btn.BackgroundColor3 = color
+            btn.TextColor3 = Color3.fromRGB(0, 0, 0)
+            btnStroke.Transparency = 0
+        else
+            btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+            btn.TextColor3 = color
+            btnStroke.Transparency = 0.7
+        end
+    end)
+end
+
+createOptionButton("OPT", Color3.fromRGB(70, 130, 255), 55)
+createOptionButton("LH", Color3.fromRGB(50, 205, 50), 110)
+createOptionButton("SKG", Color3.fromRGB(160, 160, 160), 165)
+
+local confirmBtn = Instance.new("TextButton")
+confirmBtn.Name = "Confirm"
+confirmBtn.Size = UDim2.new(0, 240, 0, 40)
+confirmBtn.Position = UDim2.new(0.5, -120, 0, 230)
+confirmBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+confirmBtn.Text = "Ejecutar"
+confirmBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+confirmBtn.TextSize = 15
+confirmBtn.Font = Enum.Font.GothamBold
+confirmBtn.BorderSizePixel = 0
+confirmBtn.Parent = mainFrame
+
+local confirmCorner = Instance.new("UICorner")
+confirmCorner.CornerRadius = UDim.new(0, 6)
+confirmCorner.Parent = confirmBtn
+
+local confirmStroke = Instance.new("UIStroke")
+confirmStroke.Color = Color3.fromRGB(80, 80, 80)
+confirmStroke.Thickness = 1
+confirmStroke.Parent = confirmBtn
+
+confirmBtn.MouseButton1Click:Connect(function()
+    screenGui:Destroy()
+
+    if selected.OPT then
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/ssshlx/legitOpt/refs/heads/main/opt"))()
+    end
+
+    if selected.LH then
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/ssshlx/ESPAIMBOT/refs/heads/main/Hub"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/ssshlx/ADC/refs/heads/main/Main"))()
+    end
+
+    if selected.SKG then
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/ssshlx/CSKG/refs/heads/main/skn"))()
+    end
+end)
+
+local cancelBtn = Instance.new("TextButton")
+cancelBtn.Name = "Cancel"
+cancelBtn.Size = UDim2.new(0, 240, 0, 35)
+cancelBtn.Position = UDim2.new(0.5, -120, 0, 285)
+cancelBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+cancelBtn.Text = "Salir sin ejecutar"
+cancelBtn.TextColor3 = Color3.fromRGB(180, 50, 50)
+cancelBtn.TextSize = 14
+cancelBtn.Font = Enum.Font.GothamSemibold
+cancelBtn.BorderSizePixel = 0
+cancelBtn.Parent = mainFrame
+
+local cancelCorner = Instance.new("UICorner")
+cancelCorner.CornerRadius = UDim.new(0, 6)
+cancelCorner.Parent = cancelBtn
+
+local cancelStroke = Instance.new("UIStroke")
+cancelStroke.Color = Color3.fromRGB(60, 60, 60)
+cancelStroke.Thickness = 1
+cancelStroke.Parent = cancelBtn
+
+cancelBtn.MouseButton1Click:Connect(function()
+    screenGui:Destroy()
+end)
