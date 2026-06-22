@@ -1,4 +1,5 @@
 local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
@@ -9,10 +10,11 @@ screenGui.Parent = playerGui
 
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.new(0, 300, 0, 380)
-mainFrame.Position = UDim2.new(0.5, -150, 0.5, -190)
+mainFrame.Size = UDim2.new(0, 300, 0, 425)
+mainFrame.Position = UDim2.new(0.5, -150, 0.5, -212)
 mainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 mainFrame.BorderSizePixel = 0
+mainFrame.BackgroundTransparency = 1
 mainFrame.Parent = screenGui
 
 local corner = Instance.new("UICorner")
@@ -22,6 +24,7 @@ corner.Parent = mainFrame
 local stroke = Instance.new("UIStroke")
 stroke.Color = Color3.fromRGB(50, 50, 50)
 stroke.Thickness = 1
+stroke.Transparency = 1
 stroke.Parent = mainFrame
 
 local titleLabel = Instance.new("TextLabel")
@@ -32,6 +35,7 @@ titleLabel.Text = "Selecciona tus Scripts"
 titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 titleLabel.TextSize = 18
 titleLabel.Font = Enum.Font.GothamBold
+titleLabel.TextTransparency = 1
 titleLabel.Parent = mainFrame
 
 local selected = {
@@ -39,6 +43,7 @@ local selected = {
     LH = false,
     SKG = false,
     CRIM = false,
+    TB = false,
     ADC = false
 }
 
@@ -47,7 +52,7 @@ local buttons = {}
 local adcBtn = Instance.new("TextButton")
 adcBtn.Name = "ADC"
 adcBtn.Size = UDim2.new(0, 240, 0, 35)
-adcBtn.Position = UDim2.new(0.5, -120, 0, 230)
+adcBtn.Position = UDim2.new(0.5, -120, 0, 275)
 adcBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 adcBtn.Text = "Admin Check"
 adcBtn.TextColor3 = Color3.fromRGB(255, 215, 0)
@@ -55,6 +60,8 @@ adcBtn.TextSize = 14
 adcBtn.Font = Enum.Font.GothamSemibold
 adcBtn.BorderSizePixel = 0
 adcBtn.Visible = false
+adcBtn.BackgroundTransparency = 1
+adcBtn.TextTransparency = 1
 adcBtn.Parent = mainFrame
 
 local adcCorner = Instance.new("UICorner")
@@ -64,19 +71,17 @@ adcCorner.Parent = adcBtn
 local adcStroke = Instance.new("UIStroke")
 adcStroke.Color = Color3.fromRGB(255, 215, 0)
 adcStroke.Thickness = 2
-adcStroke.Transparency = 0.7
+adcStroke.Transparency = 1
 adcStroke.Parent = adcBtn
 
 adcBtn.MouseButton1Click:Connect(function()
     selected.ADC = not selected.ADC
     if selected.ADC then
-        adcBtn.BackgroundColor3 = Color3.fromRGB(255, 215, 0)
-        adcBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
-        adcStroke.Transparency = 0
+        TweenService:Create(adcBtn, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = Color3.fromRGB(255, 215, 0), TextColor3 = Color3.fromRGB(0, 0, 0)}):Play()
+        TweenService:Create(adcStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {Transparency = 0}):Play()
     else
-        adcBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-        adcBtn.TextColor3 = Color3.fromRGB(255, 215, 0)
-        adcStroke.Transparency = 0.7
+        TweenService:Create(adcBtn, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = Color3.fromRGB(30, 30, 30), TextColor3 = Color3.fromRGB(255, 215, 0)}):Play()
+        TweenService:Create(adcStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {Transparency = 0.7}):Play()
     end
 end)
 
@@ -91,6 +96,8 @@ local function createOptionButton(id, displayName, color, yPos)
     btn.TextSize = 16
     btn.Font = Enum.Font.GothamSemibold
     btn.BorderSizePixel = 0
+    btn.BackgroundTransparency = 1
+    btn.TextTransparency = 1
     btn.Parent = mainFrame
 
     local btnCorner = Instance.new("UICorner")
@@ -100,32 +107,48 @@ local function createOptionButton(id, displayName, color, yPos)
     local btnStroke = Instance.new("UIStroke")
     btnStroke.Color = color
     btnStroke.Thickness = 2
-    btnStroke.Transparency = 0.7
+    btnStroke.Transparency = 1
     btnStroke.Parent = btn
 
     buttons[id] = {button = btn, stroke = btnStroke, color = color}
 
+    btn.MouseEnter:Connect(function()
+        if not selected[id] then
+            TweenService:Create(btn, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {BackgroundColor3 = Color3.fromRGB(40, 40, 40)}):Play()
+        end
+        TweenService:Create(btn, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {Size = UDim2.new(0, 245, 0, 42)}):Play()
+    end)
+
+    btn.MouseLeave:Connect(function()
+        if not selected[id] then
+            TweenService:Create(btn, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {BackgroundColor3 = Color3.fromRGB(30, 30, 30)}):Play()
+        end
+        TweenService:Create(btn, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {Size = UDim2.new(0, 240, 0, 40)}):Play()
+    end)
+
     btn.MouseButton1Click:Connect(function()
         selected[id] = not selected[id]
         if selected[id] then
-            btn.BackgroundColor3 = color
-            btn.TextColor3 = Color3.fromRGB(0, 0, 0)
-            btnStroke.Transparency = 0
+            TweenService:Create(btn, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = color, TextColor3 = Color3.fromRGB(0, 0, 0)}):Play()
+            TweenService:Create(btnStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {Transparency = 0}):Play()
         else
-            btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-            btn.TextColor3 = color
-            btnStroke.Transparency = 0.7
+            TweenService:Create(btn, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = Color3.fromRGB(30, 30, 30), TextColor3 = color}):Play()
+            TweenService:Create(btnStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {Transparency = 0.7}):Play()
         end
         
         if id == "LH" then
             if selected.LH then
                 adcBtn.Visible = true
+                TweenService:Create(adcBtn, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {BackgroundTransparency = 0, TextTransparency = 0}):Play()
+                TweenService:Create(adcStroke, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {Transparency = 0.7}):Play()
             else
+                TweenService:Create(adcBtn, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {BackgroundTransparency = 1, TextTransparency = 1}):Play()
+                TweenService:Create(adcStroke, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {Transparency = 1}):Play()
+                task.wait(0.3)
                 adcBtn.Visible = false
                 selected.ADC = false
                 adcBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
                 adcBtn.TextColor3 = Color3.fromRGB(255, 215, 0)
-                adcStroke.Transparency = 0.7
             end
         end
     end)
@@ -135,17 +158,20 @@ createOptionButton("OPT", "LH Optimizer", Color3.fromRGB(70, 130, 255), 50)
 createOptionButton("LH", "Legit Hub", Color3.fromRGB(50, 205, 50), 95)
 createOptionButton("SKG", "Skin Changer", Color3.fromRGB(160, 160, 160), 140)
 createOptionButton("CRIM", "JX", Color3.fromRGB(255, 50, 50), 185)
+createOptionButton("TB", "Trigger Bot", Color3.fromRGB(150, 50, 200), 230)
 
 local confirmBtn = Instance.new("TextButton")
 confirmBtn.Name = "Confirm"
 confirmBtn.Size = UDim2.new(0, 115, 0, 40)
-confirmBtn.Position = UDim2.new(0.5, -120, 0, 275)
+confirmBtn.Position = UDim2.new(0.5, -120, 0, 320)
 confirmBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 confirmBtn.Text = "Ejecutar"
 confirmBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 confirmBtn.TextSize = 15
 confirmBtn.Font = Enum.Font.GothamBold
 confirmBtn.BorderSizePixel = 0
+confirmBtn.BackgroundTransparency = 1
+confirmBtn.TextTransparency = 1
 confirmBtn.Parent = mainFrame
 
 local confirmCorner = Instance.new("UICorner")
@@ -155,18 +181,21 @@ confirmCorner.Parent = confirmBtn
 local confirmStroke = Instance.new("UIStroke")
 confirmStroke.Color = Color3.fromRGB(80, 80, 80)
 confirmStroke.Thickness = 1
+confirmStroke.Transparency = 1
 confirmStroke.Parent = confirmBtn
 
 local exitBtn = Instance.new("TextButton")
 exitBtn.Name = "Exit"
 exitBtn.Size = UDim2.new(0, 115, 0, 40)
-exitBtn.Position = UDim2.new(0.5, 5, 0, 275)
+exitBtn.Position = UDim2.new(0.5, 5, 0, 320)
 exitBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 exitBtn.Text = "Salir"
 exitBtn.TextColor3 = Color3.fromRGB(255, 80, 80)
 exitBtn.TextSize = 15
 exitBtn.Font = Enum.Font.GothamBold
 exitBtn.BorderSizePixel = 0
+exitBtn.BackgroundTransparency = 1
+exitBtn.TextTransparency = 1
 exitBtn.Parent = mainFrame
 
 local exitCorner = Instance.new("UICorner")
@@ -176,9 +205,33 @@ exitCorner.Parent = exitBtn
 local exitStroke = Instance.new("UIStroke")
 exitStroke.Color = Color3.fromRGB(80, 80, 80)
 exitStroke.Thickness = 1
+exitStroke.Transparency = 1
 exitStroke.Parent = exitBtn
 
+confirmBtn.MouseEnter:Connect(function()
+    TweenService:Create(confirmBtn, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {BackgroundColor3 = Color3.fromRGB(40, 40, 40)}):Play()
+    TweenService:Create(confirmBtn, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {Size = UDim2.new(0, 118, 0, 42)}):Play()
+end)
+
+confirmBtn.MouseLeave:Connect(function()
+    TweenService:Create(confirmBtn, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {BackgroundColor3 = Color3.fromRGB(25, 25, 25)}):Play()
+    TweenService:Create(confirmBtn, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {Size = UDim2.new(0, 115, 0, 40)}):Play()
+end)
+
+exitBtn.MouseEnter:Connect(function()
+    TweenService:Create(exitBtn, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {BackgroundColor3 = Color3.fromRGB(40, 40, 40)}):Play()
+    TweenService:Create(exitBtn, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {Size = UDim2.new(0, 118, 0, 42)}):Play()
+end)
+
+exitBtn.MouseLeave:Connect(function()
+    TweenService:Create(exitBtn, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {BackgroundColor3 = Color3.fromRGB(25, 25, 25)}):Play()
+    TweenService:Create(exitBtn, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {Size = UDim2.new(0, 115, 0, 40)}):Play()
+end)
+
 confirmBtn.MouseButton1Click:Connect(function()
+    TweenService:Create(mainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {BackgroundTransparency = 1, Position = UDim2.new(0.5, -150, 0.5, -250)}):Play()
+    TweenService:Create(stroke, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {Transparency = 1}):Play()
+    task.wait(0.3)
     screenGui:Destroy()
 
     if selected.OPT then
@@ -200,8 +253,31 @@ confirmBtn.MouseButton1Click:Connect(function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/ssshlx/CRIM/refs/heads/main/MOD"))()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/ssshlx/ADC/refs/heads/main/Main"))()
     end
+
+    if selected.TB then
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/ssshlx/TB/refs/heads/main/Main"))()
+    end
 end)
 
 exitBtn.MouseButton1Click:Connect(function()
+    TweenService:Create(mainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {BackgroundTransparency = 1, Position = UDim2.new(0.5, -150, 0.5, -250)}):Play()
+    TweenService:Create(stroke, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {Transparency = 1}):Play()
+    task.wait(0.3)
     screenGui:Destroy()
 end)
+
+task.wait(0.1)
+mainFrame.Position = UDim2.new(0.5, -150, 0.5, -180)
+TweenService:Create(mainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {BackgroundTransparency = 0, Position = UDim2.new(0.5, -150, 0.5, -212)}):Play()
+TweenService:Create(stroke, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Transparency = 0}):Play()
+TweenService:Create(titleLabel, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {TextTransparency = 0}):Play()
+
+for id, data in pairs(buttons) do
+    TweenService:Create(data.button, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {BackgroundTransparency = 0, TextTransparency = 0}):Play()
+    TweenService:Create(data.stroke, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Transparency = 0.7}):Play()
+end
+
+TweenService:Create(confirmBtn, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {BackgroundTransparency = 0, TextTransparency = 0}):Play()
+TweenService:Create(confirmStroke, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Transparency = 0}):Play()
+TweenService:Create(exitBtn, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {BackgroundTransparency = 0, TextTransparency = 0}):Play()
+TweenService:Create(exitStroke, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Transparency = 0}):Play()
