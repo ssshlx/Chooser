@@ -9,8 +9,8 @@ screenGui.Parent = playerGui
 
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.new(0, 300, 0, 340)
-mainFrame.Position = UDim2.new(0.5, -150, 0.5, -170)
+mainFrame.Size = UDim2.new(0, 300, 0, 380)
+mainFrame.Position = UDim2.new(0.5, -150, 0.5, -190)
 mainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 mainFrame.BorderSizePixel = 0
 mainFrame.Parent = screenGui
@@ -37,18 +37,56 @@ titleLabel.Parent = mainFrame
 local selected = {
     OPT = false,
     LH = false,
-    SKG = false
+    SKG = false,
+    CRIM = false,
+    ADC = false
 }
 
 local buttons = {}
 
-local function createOptionButton(name, color, yPos)
+local adcBtn = Instance.new("TextButton")
+adcBtn.Name = "ADC"
+adcBtn.Size = UDim2.new(0, 240, 0, 35)
+adcBtn.Position = UDim2.new(0.5, -120, 0, 230)
+adcBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+adcBtn.Text = "Admin Check"
+adcBtn.TextColor3 = Color3.fromRGB(255, 215, 0)
+adcBtn.TextSize = 14
+adcBtn.Font = Enum.Font.GothamSemibold
+adcBtn.BorderSizePixel = 0
+adcBtn.Visible = false
+adcBtn.Parent = mainFrame
+
+local adcCorner = Instance.new("UICorner")
+adcCorner.CornerRadius = UDim.new(0, 6)
+adcCorner.Parent = adcBtn
+
+local adcStroke = Instance.new("UIStroke")
+adcStroke.Color = Color3.fromRGB(255, 215, 0)
+adcStroke.Thickness = 2
+adcStroke.Transparency = 0.7
+adcStroke.Parent = adcBtn
+
+adcBtn.MouseButton1Click:Connect(function()
+    selected.ADC = not selected.ADC
+    if selected.ADC then
+        adcBtn.BackgroundColor3 = Color3.fromRGB(255, 215, 0)
+        adcBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
+        adcStroke.Transparency = 0
+    else
+        adcBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        adcBtn.TextColor3 = Color3.fromRGB(255, 215, 0)
+        adcStroke.Transparency = 0.7
+    end
+end)
+
+local function createOptionButton(id, displayName, color, yPos)
     local btn = Instance.new("TextButton")
-    btn.Name = name
-    btn.Size = UDim2.new(0, 240, 0, 45)
+    btn.Name = id
+    btn.Size = UDim2.new(0, 240, 0, 40)
     btn.Position = UDim2.new(0.5, -120, 0, yPos)
     btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    btn.Text = name
+    btn.Text = displayName
     btn.TextColor3 = color
     btn.TextSize = 16
     btn.Font = Enum.Font.GothamSemibold
@@ -65,11 +103,11 @@ local function createOptionButton(name, color, yPos)
     btnStroke.Transparency = 0.7
     btnStroke.Parent = btn
 
-    buttons[name] = {button = btn, stroke = btnStroke, color = color}
+    buttons[id] = {button = btn, stroke = btnStroke, color = color}
 
     btn.MouseButton1Click:Connect(function()
-        selected[name] = not selected[name]
-        if selected[name] then
+        selected[id] = not selected[id]
+        if selected[id] then
             btn.BackgroundColor3 = color
             btn.TextColor3 = Color3.fromRGB(0, 0, 0)
             btnStroke.Transparency = 0
@@ -78,17 +116,30 @@ local function createOptionButton(name, color, yPos)
             btn.TextColor3 = color
             btnStroke.Transparency = 0.7
         end
+        
+        if id == "LH" then
+            if selected.LH then
+                adcBtn.Visible = true
+            else
+                adcBtn.Visible = false
+                selected.ADC = false
+                adcBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+                adcBtn.TextColor3 = Color3.fromRGB(255, 215, 0)
+                adcStroke.Transparency = 0.7
+            end
+        end
     end)
 end
 
-createOptionButton("OPT", Color3.fromRGB(70, 130, 255), 55)
-createOptionButton("LH", Color3.fromRGB(50, 205, 50), 110)
-createOptionButton("SKG", Color3.fromRGB(160, 160, 160), 165)
+createOptionButton("OPT", "LH Optimizer", Color3.fromRGB(70, 130, 255), 50)
+createOptionButton("LH", "Legit Hub", Color3.fromRGB(50, 205, 50), 95)
+createOptionButton("SKG", "Skin Changer", Color3.fromRGB(160, 160, 160), 140)
+createOptionButton("CRIM", "JX", Color3.fromRGB(255, 50, 50), 185)
 
 local confirmBtn = Instance.new("TextButton")
 confirmBtn.Name = "Confirm"
-confirmBtn.Size = UDim2.new(0, 240, 0, 40)
-confirmBtn.Position = UDim2.new(0.5, -120, 0, 230)
+confirmBtn.Size = UDim2.new(0, 115, 0, 40)
+confirmBtn.Position = UDim2.new(0.5, -120, 0, 275)
 confirmBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 confirmBtn.Text = "Ejecutar"
 confirmBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -106,6 +157,27 @@ confirmStroke.Color = Color3.fromRGB(80, 80, 80)
 confirmStroke.Thickness = 1
 confirmStroke.Parent = confirmBtn
 
+local exitBtn = Instance.new("TextButton")
+exitBtn.Name = "Exit"
+exitBtn.Size = UDim2.new(0, 115, 0, 40)
+exitBtn.Position = UDim2.new(0.5, 5, 0, 275)
+exitBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+exitBtn.Text = "Salir"
+exitBtn.TextColor3 = Color3.fromRGB(255, 80, 80)
+exitBtn.TextSize = 15
+exitBtn.Font = Enum.Font.GothamBold
+exitBtn.BorderSizePixel = 0
+exitBtn.Parent = mainFrame
+
+local exitCorner = Instance.new("UICorner")
+exitCorner.CornerRadius = UDim.new(0, 6)
+exitCorner.Parent = exitBtn
+
+local exitStroke = Instance.new("UIStroke")
+exitStroke.Color = Color3.fromRGB(80, 80, 80)
+exitStroke.Thickness = 1
+exitStroke.Parent = exitBtn
+
 confirmBtn.MouseButton1Click:Connect(function()
     screenGui:Destroy()
 
@@ -115,35 +187,21 @@ confirmBtn.MouseButton1Click:Connect(function()
 
     if selected.LH then
         loadstring(game:HttpGet("https://raw.githubusercontent.com/ssshlx/ESPAIMBOT/refs/heads/main/Hub"))()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/ssshlx/ADC/refs/heads/main/Main"))()
+        if selected.ADC then
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/ssshlx/ADC/refs/heads/main/Main"))()
+        end
     end
 
     if selected.SKG then
         loadstring(game:HttpGet("https://raw.githubusercontent.com/ssshlx/CSKG/refs/heads/main/skn"))()
     end
+
+    if selected.CRIM then
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/ssshlx/CRIM/refs/heads/main/MOD"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/ssshlx/ADC/refs/heads/main/Main"))()
+    end
 end)
 
-local cancelBtn = Instance.new("TextButton")
-cancelBtn.Name = "Cancel"
-cancelBtn.Size = UDim2.new(0, 240, 0, 35)
-cancelBtn.Position = UDim2.new(0.5, -120, 0, 285)
-cancelBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-cancelBtn.Text = "Salir sin ejecutar"
-cancelBtn.TextColor3 = Color3.fromRGB(180, 50, 50)
-cancelBtn.TextSize = 14
-cancelBtn.Font = Enum.Font.GothamSemibold
-cancelBtn.BorderSizePixel = 0
-cancelBtn.Parent = mainFrame
-
-local cancelCorner = Instance.new("UICorner")
-cancelCorner.CornerRadius = UDim.new(0, 6)
-cancelCorner.Parent = cancelBtn
-
-local cancelStroke = Instance.new("UIStroke")
-cancelStroke.Color = Color3.fromRGB(60, 60, 60)
-cancelStroke.Thickness = 1
-cancelStroke.Parent = cancelBtn
-
-cancelBtn.MouseButton1Click:Connect(function()
+exitBtn.MouseButton1Click:Connect(function()
     screenGui:Destroy()
 end)
